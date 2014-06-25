@@ -86,6 +86,7 @@ public class DisplaySettings extends SettingsPreferenceFragment implements
     private static final String KEY_DISPLAY_COLOR = "color_calibration";
     private static final String KEY_DISPLAY_GAMMA = "gamma_tuning";
     private static final String KEY_SCREEN_COLOR_SETTINGS = "screencolor_settings";
+    private static final String KEY_CUSTOM_RECENT = "custom_recent_mode";
 
     private static final int DLG_GLOBAL_CHANGE_WARNING = 1;
 
@@ -93,6 +94,7 @@ public class DisplaySettings extends SettingsPreferenceFragment implements
     private static final String KEY_EXPANDED_DESKTOP_NO_NAVBAR = "expanded_desktop_no_navbar";
     private static final String CATEGORY_EXPANDED_DESKTOP = "expanded_desktop_category";
 
+    private ListPreference mRecentsCustom;
     private ListPreference mExpandedDesktopPref;
     private CheckBoxPreference mExpandedDesktopNoNavbarPref;
 
@@ -291,6 +293,14 @@ public class DisplaySettings extends SettingsPreferenceFragment implements
         } else {
             getPreferenceScreen().removePreference(lightPrefs);
         }
+
+        // Custom Recent.
+        mRecentsCustom = (ListPreference) findPreference(KEY_CUSTOM_RECENT);
+        long recent_state = Settings.System.getLong(getContentResolver(),
+                Settings.System.CUSTOM_RECENT, 0);
+        mRecentsCustom.setValue(String.valueOf(recent_state));
+        mRecentsCustom.setSummary(mRecentsCustom.getEntry());
+        mRecentsCustom.setOnPreferenceChangeListener(this);
     }
 
     private void updateDisplayRotationPreferenceDescription() {
@@ -613,6 +623,14 @@ public class DisplaySettings extends SettingsPreferenceFragment implements
             } catch (NumberFormatException e) {
                 Log.e(TAG, "could not persist screen animation style setting", e);
             }
+        }
+        if (preference == mRecentsCustom) {
+            int val = Integer.parseInt((String) objValue);
+            int index = mRecentsCustom.findIndexOfValue((String) objValue);
+            Settings.System.putInt(getActivity().getContentResolver(),
+                Settings.System.CUSTOM_RECENT, val);
+            mRecentsCustom.setSummary(mRecentsCustom.getEntries()[index]);
+            return true;
         }
 
         return true;

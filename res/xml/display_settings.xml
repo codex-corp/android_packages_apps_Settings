@@ -26,6 +26,13 @@
             android:key="display_prefs"
             android:title="@string/display_settings_title">
 
+	   <ListPreference
+		android:key="custom_recent_mode"
+		android:persistent="false"
+		android:title="@string/custom_recent_title"
+		android:entries="@array/custom_recent_entries"
+		android:entryValues="@array/custom_recent_values" />
+
             <PreferenceScreen
                     android:key="display_rotation"
                     android:fragment="com.android.settings.cyanogenmod.DisplayRotation"
